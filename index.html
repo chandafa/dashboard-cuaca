@@ -32,12 +32,45 @@
                          skeletonLoading: {
                             '0%': { backgroundColor: 'hsl(200, 20%, 80%)' },
                             '100%': { backgroundColor: 'hsl(200, 20%, 95%)' },
-                        }
+                        },
+                        beam: {
+                            '0%': {
+                                top: '0',
+                                left: '0',
+                                width: '0',
+                                height: '2px',
+                            },
+                            '25%': {
+                                top: '0',
+                                left: '0',
+                                width: '100%',
+                                height: '2px',
+                            },
+                            '50%': {
+                                top: '0',
+                                left: '100%',
+                                width: '0',
+                                height: '100%',
+                            },
+                            '75%': {
+                                top: '100%',
+                                left: '0',
+                                width: '100%',
+                                height: '0',
+                            },
+                            '100%': {
+                                top: '0',
+                                left: '0',
+                                width: '0',
+                                height: '100%',
+                            },
+                        },
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-in-out',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'skeleton': 'skeletonLoading 1s linear infinite alternate'
+                        'skeleton': 'skeletonLoading 1s linear infinite alternate',
+                        'beam-animate': 'beam 4s linear infinite',
                     }
                 },
             }
@@ -90,26 +123,33 @@
         .skeleton-container .skeleton { display: none; }
         .task-item.completed span { text-decoration: line-through; color: #64748b; }
         .dark .task-item.completed span { color: #94a3b8; }
+        .card {
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #a78bfa);
+            animation: beam-animate 4s linear infinite;
+        }
+        .dark .card {
+            background-color: #0e0d0d;
+        }
+        .dark .card::before {
+            background: linear-gradient(90deg, transparent, #4c1d95);
+        }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200">
 
-    <div class="container mx-auto p-4 md:p-8">
+    <div class="container mx-auto p-4 md:p-8 pb-24">
         
         <!-- Bagian Header -->
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Dashboard IoT</h1>
                 <p id="location-display" class="text-sm text-slate-500 dark:text-slate-400">Memuat lokasi...</p>
-            </div>
-            <div class="flex items-center gap-2">
-                 <button id="change-location-btn" class="clickable px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-slate-900">
-                    Ubah Kota
-                </button>
-                <button id="theme-toggle" class="clickable p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-slate-900">
-                    <svg id="theme-icon-sun" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                </button>
             </div>
         </header>
 
@@ -134,10 +174,10 @@
                     <div class="skeleton h-12 w-3/4 rounded-md"></div>
                 </div>
 
-                <!-- Kartu Kelembapan -->
+                <!-- Kartu Lembap -->
                 <div class="card bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-transparent dark:border-slate-700 skeleton-container">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-200">Kelembapan</h2>
+                        <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-200">Lembap</h2>
                         <div class="p-2 bg-sky-100 dark:bg-sky-900/50 rounded-lg"><svg class="w-6 h-6 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0c-3.314 0-6 2.686-6 6s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zM4 12c0 4.418 3.582 8 8 8s8-3.582 8-8-3.582-8-8-8-8 3.582-8 8z"></path></svg></div>
                     </div>
                     <div class="data-content"><div id="humidity-value" class="text-4xl font-bold text-slate-900 dark:text-white">-- %</div><div id="humidity-status" class="text-sm text-slate-500 dark:text-slate-400 mt-2"></div></div>
@@ -180,7 +220,7 @@
             </div>
             
             <!-- Bagian To-Do List -->
-            <div class="card bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-transparent dark:border-slate-700">
+            <div id="todo-card" class="card bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-transparent dark:border-slate-700">
                 <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-4">Daftar Tugas</h2>
                 <form id="todo-form" class="flex gap-2 mb-4">
                     <input type="text" id="todo-input" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tambah tugas baru..." required>
@@ -210,11 +250,6 @@
         </div>
     </div>
     
-    <!-- Tombol Floating AI Chat -->
-    <button id="ai-chat-fab" class="clickable fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-40">
-        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14.213 19.336a3.743 3.743 0 01-4.426 0 3.744 3.744 0 01-1.3-2.837c0-1.74 1.185-3.23 2.822-3.666a.75.75 0 01.868.428.75.75 0 01-.428.868 2.24 2.24 0 00-1.706 2.37c0 .877.56 1.637 1.369 1.956a2.24 2.24 0 002.656 0c.81-.32 1.369-1.08 1.369-1.956a2.24 2.24 0 00-1.706-2.37.75.75 0 01.44-1.296c1.637.435 2.822 1.926 2.822 3.666 0 1.053-.42 2.01-1.12 2.69a3.733 3.733 0 01-1.583.791zm5.228-5.33a.75.75 0 01.559 1.325l-1.93 1.114a.75.75 0 01-1.118-.938l1.93-2.206a.75.75 0 01.56-.295zM4.559 14.006a.75.75 0 01.56.295l1.93 2.206a.75.75 0 11-1.118.938l-1.93-1.114a.75.75 0 01.559-1.325zM12 2.25a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.438 4.938a.75.75 0 011.06 0l2.122 2.121a.75.75 0 11-1.06 1.06L6.438 6a.75.75 0 010-1.06zM20.121 6a.75.75 0 010 1.06l-2.121 2.122a.75.75 0 11-1.06-1.06l2.121-2.121a.75.75 0 011.06 0z"/></svg>
-    </button>
-    
     <!-- Modal AI Chat -->
     <div id="ai-chat-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-end sm:items-center p-4 opacity-0 pointer-events-none">
         <div class="modal-content bg-white dark:bg-slate-800 w-full max-w-2xl h-[80vh] flex flex-col rounded-t-lg sm:rounded-lg shadow-xl transform translate-y-full sm:translate-y-10">
@@ -235,7 +270,27 @@
             </footer>
         </div>
     </div>
-
+    
+    <!-- Dock Menu Mengambang -->
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm shadow-xl rounded-full px-3 py-2 flex items-center gap-2 z-40">
+        <button id="dock-home" title="Ke Atas" class="clickable p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+        </button>
+        <button id="dock-todo" title="Daftar Tugas" class="clickable p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+        </button>
+        <button id="dock-location" title="Ubah Lokasi" class="clickable p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        </button>
+        <button id="dock-ai" title="Tanya AI" class="clickable p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14.213 19.336a3.743 3.743 0 01-4.426 0 3.744 3.744 0 01-1.3-2.837c0-1.74 1.185-3.23 2.822-3.666a.75.75 0 01.868.428.75.75 0 01-.428.868 2.24 2.24 0 00-1.706 2.37c0 .877.56 1.637 1.369 1.956a2.24 2.24 0 002.656 0c.81-.32 1.369-1.08 1.369-1.956a2.24 2.24 0 00-1.706-2.37.75.75 0 01.44-1.296c1.637.435 2.822 1.926 2.822 3.666 0 1.053-.42 2.01-1.12 2.69a3.733 3.733 0 01-1.583.791zm5.228-5.33a.75.75 0 01.559 1.325l-1.93 1.114a.75.75 0 01-1.118-.938l1.93-2.206a.75.75 0 01.56-.295zM4.559 14.006a.75.75 0 01.56.295l1.93 2.206a.75.75 0 11-1.118.938l-1.93-1.114a.75.75 0 01.559-1.325zM12 2.25a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.438 4.938a.75.75 0 011.06 0l2.122 2.121a.75.75 0 11-1.06 1.06L6.438 6a.75.75 0 010-1.06zM20.121 6a.75.75 0 010 1.06l-2.121 2.122a.75.75 0 11-1.06-1.06l2.121-2.121a.75.75 0 011.06 0z"/></svg>
+        </button>
+        <div class="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
+        <button id="dock-theme" title="Ganti Tema" class="clickable p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+             <svg id="dock-theme-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+             <svg id="dock-theme-moon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        </button>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -405,7 +460,7 @@
                             <input type="checkbox" class="task-checkbox h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300" ${todo.completed ? 'checked' : ''}>
                             <span>${todo.text}</span>
                         </div>
-                        <button class="delete-task-btn text-slate-400 hover:text-red-500">&times;</button>`;
+                        <button class="delete-task-btn clickable text-slate-400 hover:text-red-500 text-xl">&times;</button>`;
                     todoListEl.appendChild(li);
                 });
             }
@@ -434,6 +489,7 @@
             });
 
             todoListEl.addEventListener('click', (e) => {
+                playClickSound();
                 const target = e.target;
                 const li = target.closest('.task-item');
                 if (!li) return;
@@ -444,7 +500,6 @@
                 } else if(target.matches('.delete-task-btn')) {
                     todos.splice(index, 1);
                 } else {
-                    // Clicking the item text also toggles completion
                     todos[index].completed = !todos[index].completed;
                 }
                 saveTodos();
@@ -452,10 +507,10 @@
             });
 
 
-            // --- LOGIKA LOKASI & MODAL ---
-            const modal = document.getElementById('location-modal');
-            const changeLocationBtn = document.getElementById('change-location-btn');
-            const closeModalBtn = document.getElementById('close-modal-btn');
+            // --- LOGIKA MODAL LOKASI ---
+            const locationModal = document.getElementById('location-modal');
+            const openLocationModalBtn = document.getElementById('dock-location');
+            const closeLocationModalBtn = document.getElementById('close-modal-btn');
             const locationForm = document.getElementById('location-form');
             const citySelect = document.getElementById('city-select');
 
@@ -480,24 +535,29 @@
                 fetchAllData();
             }
 
-            changeLocationBtn.addEventListener('click', () => modal.classList.remove('opacity-0', 'pointer-events-none'));
-            closeModalBtn.addEventListener('click', () => modal.classList.add('opacity-0', 'pointer-events-none'));
+            openLocationModalBtn.addEventListener('click', () => locationModal.classList.remove('opacity-0', 'pointer-events-none'));
+            closeLocationModalBtn.addEventListener('click', () => locationModal.classList.add('opacity-0', 'pointer-events-none'));
             locationForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 localStorage.setItem('locationName', citySelect.value);
-                closeModalBtn.click();
+                closeLocationModalBtn.click();
                 initLocation();
             });
 
-            // --- LOGIKA AI CHAT ---
+            // --- LOGIKA AI CHAT & DOCK ---
             const chatModal = document.getElementById('ai-chat-modal');
-            const aiChatFab = document.getElementById('ai-chat-fab');
             const closeChatBtn = document.getElementById('close-chat-btn');
             const chatForm = document.getElementById('chat-form');
             const chatInput = document.getElementById('chat-input');
             const chatMessages = document.getElementById('chat-messages');
-
-            aiChatFab.addEventListener('click', () => {
+            
+            const dockHomeBtn = document.getElementById('dock-home');
+            const dockTodoBtn = document.getElementById('dock-todo');
+            const dockAiBtn = document.getElementById('dock-ai');
+            
+            dockHomeBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            dockTodoBtn.addEventListener('click', () => document.getElementById('todo-card').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+            dockAiBtn.addEventListener('click', () => {
                 chatModal.classList.remove('opacity-0', 'pointer-events-none');
                 document.querySelector('#ai-chat-modal .modal-content').classList.remove('translate-y-full', 'sm:translate-y-10');
             });
@@ -541,7 +601,7 @@
 
                 try {
                     const payload = { contents: chatHistory };
-                    const apiKey = "AIzaSyA8SKk2FxIf3lQdsJIHWUhR1ZK8s2Yh2ZI";
+                    const apiKey = "";
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -578,39 +638,47 @@
                 }
             });
 
-            // --- INISIALISASI ---
-            document.querySelectorAll('.clickable').forEach(el => {
-                el.addEventListener('click', playClickSound);
+            // --- LOGIKA TEMA ---
+            const dockThemeBtn = document.getElementById('dock-theme');
+            const dockSunIcon = document.getElementById('dock-theme-sun');
+            const dockMoonIcon = document.getElementById('dock-theme-moon');
+            const htmlEl = document.documentElement;
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    htmlEl.classList.add('dark'); 
+                    dockSunIcon.classList.remove('hidden'); 
+                    dockMoonIcon.classList.add('hidden');
+                } else {
+                    htmlEl.classList.remove('dark'); 
+                    dockSunIcon.classList.add('hidden'); 
+                    dockMoonIcon.classList.remove('hidden');
+                }
+            };
+            
+            dockThemeBtn.addEventListener('click', () => {
+                const newTheme = htmlEl.classList.contains('dark') ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
             });
+
+            // --- INISIALISASI ---
+            document.querySelectorAll('.clickable').forEach(el => el.addEventListener('click', playClickSound));
+            
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme);
+
             populateCityDropdown();
             loadTodos();
             initLocation();
             setInterval(fetchAllData, 600000);
             setInterval(updateNextPrayerHighlight, 60000);
 
-            // --- FUNGSI BANTUAN & THEME TOGGLE (TIDAK BERUBAH) ---
+            // --- FUNGSI BANTUAN ---
             function getWeatherInfo(code) { 
                  const weatherMap={0:{desc:"Cerah",icon:`<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.592a.75.75 0 01-1.06-1.061l1.591-1.591a.75.75 0 011.06 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 01-1.06 0l-1.591-1.592a.75.75 0 111.06-1.06l1.591 1.591a.75.75 0 010 1.061zM12 18a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 010-1.06l1.591-1.591a.75.75 0 111.06 1.06l-1.591 1.59a.75.75 0 01-1.06 0zM5.106 7.166a.75.75 0 011.06 0l1.591 1.591a.75.75 0 01-1.06 1.06l-1.591-1.59a.75.75 0 010-1.061zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12z"/></svg>`},1:{desc:"Cerah Berawan",icon:`<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" /><path d="M12.25,1.071c-4.88,0.49-8.75,4.36-9.24,9.24C2.52,15.191,3.48,19,7.5,19c4.02,0,7.48-3.35,7.97-7.75 C16.52,6.37,15.75,2.14,12.25,1.071z M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5s5,2.24,5,5S14.76,17,12,17z"/></svg>`},2:{desc:"Berawan",icon:`<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.57-2.015.75.75 0 00.358-.815A7.5 7.5 0 106.84 15.63a.75.75 0 00.913-.642 6 6 0 01-3.253-5.238z" clip-rule="evenodd" /><path d="M15.75 12a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zM14.25 15a.75.75 0 001.5 0v-1.5a.75.75 0 00-1.5 0v1.5z" /></svg>`},3:{desc:"Mendung",icon:`<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 24 24" fill="currentColor"><path d="M18 12.375c0 .252.012.499.035.744a8.251 8.251 0 01-2.923 5.795.75.75 0 01-1.066-1.056 6.751 6.751 0 002.454-4.743A6.732 6.732 0 0015.75 12c0-3.47-2.64-6.32-6-6.682a.75.75 0 01.732-1.482 8.25 8.25 0 018.268 8.25z" /><path d="M10.5 3.375A6.75 6.75 0 003.75 10.125c0 3.727 3.023 6.75 6.75 6.75 3.47 0 6.32-2.64 6.682-6a.75.75 0 00-1.482-.232A5.25 5.25 0 0110.5 15.375a5.25 5.25 0 01-5.25-5.25c0-2.658 1.96-4.862 4.5-5.197a.75.75 0 00.75-1.495z" /></svg>`},61:{desc:"Hujan Ringan",icon:`<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 4.5a6.75 6.75 0 00-5.763 9.444L3.46 16.22a.75.75 0 101.08 1.04l1.272-1.316A6.75 6.75 0 0010.5 18a6.75 6.75 0 006.75-6.75c0-3.515-2.655-6.425-6-6.732z" /><path d="M9 19.5a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0v2.25zM12.75 19.5a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0v2.25z"/></svg>`},95:{desc:"Badai Petir",icon:`<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.5 3.75a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M5.528 8.028a.75.75 0 01.972-.472l3.75 1.5a.75.75 0 010 1.388l-3.75 1.5a.75.75 0 01-.972-.916l.5-1.25a.75.75 0 010-.472l-.5-1.25a.75.75 0 010-.472z" clip-rule="evenodd" /><path d="M12.991 19.529a.75.75 0 01-1.482.232A5.25 5.25 0 0110.5 15.375a5.25 5.25 0 01-5.25-5.25c0-2.658 1.96-4.862 4.5-5.197a.75.75 0 01.732 1.482 3.75 3.75 0 00-3.214 3.715 3.75 3.75 0 003.75 3.75 3.75 3.75 0 003.491-2.417.75.75 0 111.417.484c-.45 1.32-1.606 2.378-3.009 2.655a.75.75 0 01-.657-.595z" /></svg>`},};
                 return weatherMap[code] || { desc: "Tidak Diketahui", icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>` };
             }
-            const themeToggle = document.getElementById('theme-toggle');
-            const htmlEl = document.documentElement;
-            const applyTheme = (theme) => {
-                const sunIcon = document.getElementById('theme-icon-sun');
-                const moonIcon = document.getElementById('theme-icon-moon');
-                if (theme === 'dark') {
-                    htmlEl.classList.add('dark'); sunIcon.classList.remove('hidden'); moonIcon.classList.add('hidden');
-                } else {
-                    htmlEl.classList.remove('dark'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden');
-                }
-            };
-            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            applyTheme(savedTheme);
-            themeToggle.addEventListener('click', () => {
-                const newTheme = htmlEl.classList.contains('dark') ? 'light' : 'dark';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
         });
     </script>
 </body>
